@@ -1,0 +1,641 @@
+/* ============================================================
+   Shared section styling
+   ============================================================ */
+
+/* The hero and the pour film morph their palette to whichever flavor is
+   on stage. Everything after them holds the Classic BIZON blue instead,
+   so the page has one identity rather than twelve. */
+.marquee,
+.spec,
+.grid-sec,
+.ecurve,
+.cta,
+.footer,
+.nav__progress {
+  --accent: #2f6bff;
+  --accent-2: #7fb2ff;
+  --flavor-bg: #060b1c;
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px var(--gutter);
+  mix-blend-mode: difference;
+}
+
+.nav__logo {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 23px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  color: #fff;
+}
+
+.nav__logo small {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.3em;
+  opacity: 0.6;
+}
+
+.nav__links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav__links a {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0.62;
+  transition: opacity 0.3s var(--ease);
+}
+
+.nav__links a:hover {
+  opacity: 1;
+}
+
+.nav__progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 55;
+  box-shadow: 0 0 14px var(--accent);
+}
+
+@media (max-width: 860px) {
+  .nav__links {
+    display: none;
+  }
+}
+
+/* ---------- Marquee ---------- */
+.marquee {
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+  padding-block: 22px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+}
+
+.marquee__row {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee__row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 34px;
+  padding-right: 34px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 62px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.marquee__row i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+.marquee__row span:nth-child(even) {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+}
+
+/* ---------- Spec / ingredients ---------- */
+.spec {
+  background: var(--bg);
+  position: relative;
+  z-index: 4;
+}
+
+.spec__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(40px, 7vw, 110px);
+  align-items: start;
+}
+
+.spec__visual {
+  position: sticky;
+  top: 16vh;
+  display: grid;
+  place-items: center;
+  height: min(64vh, 560px);
+}
+
+.spec__visual-glow {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 45%, transparent), transparent 65%);
+  filter: blur(46px);
+}
+
+.spec__visual img {
+  position: relative;
+  height: 86%;
+  width: auto;
+  filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.7));
+}
+
+.spec__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100%, 460px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.spec__ring::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: calc(50% - 3px);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px var(--accent);
+}
+
+.spec__row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 20px;
+  align-items: baseline;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.spec__row-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+}
+
+.spec__row h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(22px, 2.4vw, 32px);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0 0 6px;
+}
+
+.spec__row p {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 44ch;
+}
+
+.spec__row b {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.8vw, 38px);
+  font-weight: 800;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .spec__grid {
+    grid-template-columns: 1fr;
+  }
+  .spec__visual {
+    position: relative;
+    top: 0;
+    aspect-ratio: 4 / 3;
+    max-width: 380px;
+    margin-inline: auto;
+  }
+}
+
+/* ---------- Flavor grid ---------- */
+.grid-sec {
+  background: var(--bg-2);
+  position: relative;
+  z-index: 4;
+}
+
+.fgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.fcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 36px 26px 30px;
+  background: var(--bg);
+  overflow: hidden;
+  transition: background-color 0.5s var(--ease);
+}
+
+.fcard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 100%,
+    color-mix(in srgb, var(--card) 40%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+
+.fcard:hover::before {
+  opacity: 1;
+}
+
+.fcard__num {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+}
+
+/* Every can ships on the same 667×1100 canvas, so a plain height rule
+   lines them all up at an identical size. */
+.fcard__shot {
+  position: relative;
+  height: 230px;
+  display: grid;
+  place-items: center;
+  margin: 18px 0 20px;
+}
+
+.fcard__shot img {
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.65));
+  transition: transform 0.6s var(--ease);
+}
+
+.fcard:hover .fcard__shot img {
+  transform: translateY(-14px) scale(1.06) rotate(-3deg);
+}
+
+.fcard h3 {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 26px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0 0 6px;
+}
+
+.fcard__tag {
+  position: relative;
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--card);
+  margin-bottom: 16px;
+}
+
+.fcard__meta {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+/* ---------- Energy curve ---------- */
+.ecurve {
+  background: var(--bg);
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+}
+
+.ecurve__plot {
+  position: relative;
+}
+
+.ecurve__plot svg {
+  display: block;
+  width: 100%;
+  height: clamp(220px, 34vh, 360px);
+  overflow: visible;
+}
+
+.ecurve__grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ecurve__line {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 70%, transparent));
+}
+
+.ecurve__dot {
+  fill: #fff;
+  filter: drop-shadow(0 0 8px var(--accent));
+}
+
+.ecurve__halo {
+  fill: color-mix(in srgb, var(--accent) 45%, transparent);
+  animation: ecurve-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes ecurve-pulse {
+  0%, 100% { r: 14; opacity: 0.5; }
+  50%      { r: 22; opacity: 0.18; }
+}
+
+/* Time markers sit under the plot, positioned by percentage */
+.ecurve__marks {
+  position: relative;
+  height: 86px;
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.ecurve__mark {
+  position: absolute;
+  top: 0;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+  width: max-content;
+  max-width: 24vw;
+}
+
+.ecurve__tick {
+  width: 1px;
+  height: 14px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  margin-bottom: 6px;
+}
+
+.ecurve__mark strong {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(14px, 1.5vw, 19px);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.ecurve__mark small {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+
+/* First and last markers hug the edges instead of overflowing */
+.ecurve__mark:first-child {
+  translate: 0 0;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.ecurve__mark:last-child {
+  translate: -100% 0;
+  align-items: flex-end;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  /* Middle markers crowd at phone width — keep the three that matter */
+  .ecurve__mark:nth-child(2),
+  .ecurve__mark:nth-child(4) {
+    display: none;
+  }
+  .ecurve__marks {
+    height: 76px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecurve__halo {
+    animation: none;
+  }
+}
+
+/* ---------- CTA ---------- */
+.cta {
+  position: relative;
+  z-index: 4;
+  min-height: 92vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* The film carries this section, so it is left bright — legibility comes
+   from the overlay below rather than from flattening the footage. */
+.cta__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.78;
+}
+
+.cta__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 50%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    linear-gradient(to bottom, var(--bg) 0%, rgba(5, 7, 13, 0.42) 35%, rgba(5, 7, 13, 0.42) 65%, var(--bg) 100%);
+}
+
+.cta__inner {
+  position: relative;
+  z-index: 2;
+  padding: 90px var(--gutter);
+}
+
+.cta h2 {
+  font-size: clamp(54px, 11vw, 168px);
+  margin-bottom: 22px;
+}
+
+.cta h2 em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent);
+}
+
+.cta__row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 34px;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  position: relative;
+  z-index: 4;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding-block: 54px 34px;
+}
+
+.footer__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 34px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--line);
+}
+
+.footer__col h5 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 16px;
+  font-weight: 400;
+}
+
+.footer__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.footer__col a {
+  font-size: 14px;
+  color: var(--ink-2);
+  transition: color 0.3s var(--ease);
+}
+
+.footer__col a:hover {
+  color: var(--accent);
+}
+
+.footer__word {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(60px, 17vw, 260px);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+  margin: 40px 0 26px;
+  text-align: center;
+  user-select: none;
+}
+
+.footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ---------- Preloader ---------- */
+.preload {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+}
+
+.preload__word {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(54px, 13vw, 170px);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.preload__word span {
+  display: inline-block;
+}
+
+.preload__bar {
+  width: min(280px, 60vw);
+  height: 1px;
+  background: var(--line);
+  margin-top: 26px;
+  overflow: hidden;
+}
+
+.preload__bar i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+}

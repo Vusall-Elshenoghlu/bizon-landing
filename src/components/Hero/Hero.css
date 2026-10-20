@@ -1,0 +1,694 @@
+.hero {
+  position: relative;
+  z-index: 2;
+  /* The stage is dragged by hand, so nothing here should turn into a
+     text selection half-way through a swipe. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hero__pin {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--flavor-bg);
+  transition: background-color 0.1s linear;
+}
+
+/* ---------- Atmosphere ---------- */
+.hero__aura {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(1200px, 130vw);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 65%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 22%, transparent) 38%,
+    transparent 68%
+  );
+  filter: blur(48px);
+  opacity: 0.65;
+  pointer-events: none;
+  animation: aura-breathe 4s ease-in-out infinite;
+}
+
+@keyframes aura-breathe {
+  0%, 100% { opacity: 0.65; scale: 1; }
+  50%       { opacity: 0.82; scale: 1.06; }
+}
+
+/* Sits above the cans but below the copy: keeps the side columns legible
+   where a can would otherwise slide underneath the text. */
+.hero__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, rgba(3, 5, 11, 0.9) 0%, rgba(3, 5, 11, 0.35) 22%, transparent 40%),
+    linear-gradient(to left, rgba(3, 5, 11, 0.9) 0%, rgba(3, 5, 11, 0.3) 18%, transparent 34%),
+    radial-gradient(ellipse 80% 60% at 50% 55%, transparent 25%, rgba(0, 0, 0, 0.6) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 22%, transparent 68%, rgba(0, 0, 0, 0.82) 100%);
+}
+
+@media (max-width: 1100px) {
+  .hero__vignette {
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 26%, rgba(3, 5, 11, 0.86) 72%, rgba(3, 5, 11, 0.95) 100%);
+  }
+}
+
+.hero__rays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 calc(100% / 12 - 1px),
+    rgba(255, 255, 255, 0.05) calc(100% / 12 - 1px) calc(100% / 12)
+  );
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 0%, transparent 72%);
+}
+
+/* ---------- Ghost word ---------- */
+.hero__ghost {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -56%;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.hero__ghost span {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(100px, 23vw, 360px);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  color: transparent;
+  background: linear-gradient(
+    to bottom,
+    var(--accent-2) 0%,
+    color-mix(in srgb, var(--accent) 70%, transparent) 52%,
+    transparent 96%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.17;
+  filter: blur(1px);
+}
+
+/* ---------- Can stage ---------- */
+.hero__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  perspective: 1600px;
+  /* Grab anywhere on the stage to flip through the lineup. Elements that
+     sit above it (copy, CTA, rail) keep their own higher z-index. */
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.hero__stage.is-dragging {
+  cursor: grabbing;
+}
+
+.hero__stage.is-dragging .can {
+  cursor: grabbing;
+}
+
+.can {
+  --can-w: clamp(190px, 21vw, 290px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--can-w);
+  margin-left: calc(var(--can-w) / -2);
+  margin-top: calc(var(--can-w) * -0.82);
+  transform-style: preserve-3d;
+  pointer-events: auto;
+  padding: 0;
+  will-change: transform, opacity, filter;
+}
+
+.can__inner {
+  display: block;
+  position: relative;
+  will-change: transform;
+}
+
+/* Floating bob on the active can — GSAP owns .can, CSS owns .can__inner */
+.can.is-active .can__inner {
+  animation: can-float 3.6s ease-in-out infinite;
+}
+
+@keyframes can-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  30%       { transform: translateY(-10px) rotate(0.4deg); }
+  70%       { transform: translateY(-6px) rotate(-0.3deg); }
+}
+
+.can img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 34px 44px rgba(0, 0, 0, 0.72));
+  transition: filter 0.5s var(--ease);
+  -webkit-user-drag: none;
+}
+
+/* Each can turns slowly on its own, the way a product does on a plinth.
+   The arc stays well short of a quarter turn — these are flat renders, and
+   past that the label would read as mirrored rather than rotated.
+   GSAP owns .can and CSS owns .can__inner, so the spin lives on the images
+   to stay clear of both. The pool below is deliberately left out: a floor
+   shadow that swivels with the can reads as a mistake. */
+.can__inner > img:not(.can__reflect) {
+  animation: can-spin 9s ease-in-out infinite;
+  animation-delay: var(--spin-delay, 0s);
+}
+
+.can__reflect {
+  animation: can-spin-reflect 9s ease-in-out infinite;
+  animation-delay: var(--spin-delay, 0s);
+}
+
+@keyframes can-spin {
+  0%,
+  100% {
+    transform: rotateY(-17deg);
+  }
+  50% {
+    transform: rotateY(17deg);
+  }
+}
+
+/* Same arc, but the mirror flip has to survive the keyframe. */
+@keyframes can-spin-reflect {
+  0%,
+  100% {
+    transform: scaleY(-1) rotateY(-17deg);
+  }
+  50% {
+    transform: scaleY(-1) rotateY(17deg);
+  }
+}
+
+/* Active can gets a tinted glow that matches the flavor */
+.can.is-active img {
+  filter:
+    drop-shadow(0 34px 44px rgba(0, 0, 0, 0.72))
+    drop-shadow(0 0 28px color-mix(in srgb, var(--accent) 40%, transparent));
+}
+
+/* A hint of a reflection. Anything stronger and the mirrored cans read
+   as a second row of product rather than floor bounce. */
+.can__reflect {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 38%;
+  object-fit: cover;
+  object-position: top;
+  transform: scaleY(-1);
+  transform-origin: top;
+  opacity: 0.09;
+  filter: blur(5px);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  pointer-events: none;
+}
+
+.can__pool {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  translate: -50% 0;
+  width: 92%;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--accent) 65%, transparent) 0%,
+    transparent 70%
+  );
+  filter: blur(14px);
+  pointer-events: none;
+  animation: pool-pulse 3.6s ease-in-out infinite;
+}
+
+@keyframes pool-pulse {
+  0%, 100% { opacity: 0.8; transform: translateX(-50%) scaleX(1); }
+  50%       { opacity: 1;   transform: translateX(-50%) scaleX(1.12); }
+}
+
+/* "AÇ" affordance on the active can */
+.can__hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #fff;
+  background: color-mix(in srgb, var(--accent) 80%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  scale: 0.7;
+  pointer-events: none;
+  transition: opacity 0.35s var(--ease), scale 0.35s var(--ease);
+}
+
+.can.is-active:hover .can__hint {
+  opacity: 1;
+  scale: 1;
+}
+
+.can.is-active {
+  cursor: pointer;
+}
+
+/* ---------- Copy columns ---------- */
+.hero__grid {
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(92px, 12vh, 140px) var(--gutter) clamp(120px, 16vh, 170px);
+  pointer-events: none;
+}
+
+.hero__grid > * {
+  pointer-events: auto;
+}
+
+.hero__copy {
+  max-width: 340px;
+}
+
+.hero__index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+
+.hero__name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(38px, 4.2vw, 64px);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+
+.hero__tagline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin: 0 0 20px;
+}
+
+.hero__desc {
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--ink-2);
+  margin: 0 0 24px;
+}
+
+.hero__notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.hero__note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-2);
+  transition: border-color 0.4s var(--ease), color 0.4s var(--ease);
+}
+
+.hero__note:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Right column reads as a HUD panel — it sits over the side cans, so it
+   needs its own ground rather than relying on the vignette alone. */
+.hero__meta {
+  justify-self: end;
+  width: min(268px, 100%);
+  text-align: right;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 9, 18, 0.72),
+    rgba(6, 9, 18, 0.5)
+  );
+  backdrop-filter: blur(14px) saturate(0.7);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.hero__spec {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero__spec div {
+  text-align: right;
+}
+
+.hero__spec b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.hero__spec small {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.hero__bar {
+  margin-bottom: 14px;
+}
+
+.hero__bar-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 7px;
+}
+
+.hero__bar-track {
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.hero__bar-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(to right, var(--accent), var(--accent-2));
+  box-shadow: 0 0 12px var(--accent);
+  border-radius: 2px;
+}
+
+/* ---------- Open CTA ---------- */
+.hero__cta {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(104px, 14vh, 150px);
+  translate: -50% 0;
+  z-index: 5;
+}
+
+/* Pulse ring behind the CTA button */
+.hero__cta::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  filter: blur(12px);
+  animation: cta-glow 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cta-glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.1); }
+}
+
+/* ---------- Flavor rail ---------- */
+.hero__rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  backdrop-filter: blur(10px);
+}
+
+.hero__rail-inner {
+  display: flex;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.hero__rail-item {
+  position: relative;
+  flex: 1;
+  padding: 16px 8px 18px;
+  text-align: left;
+  border-left: 1px solid var(--line);
+  transition: background-color 0.4s var(--ease);
+}
+
+.hero__rail-item:last-child {
+  border-right: 1px solid var(--line);
+}
+
+.hero__rail-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hero__rail-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+  margin-bottom: 5px;
+}
+
+.hero__rail-name {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.4s var(--ease);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero__rail-item.is-active .hero__rail-name {
+  color: var(--ink);
+}
+
+.hero__rail-item.is-active .hero__rail-num {
+  color: var(--accent);
+}
+
+.hero__rail-swatch {
+  position: absolute;
+  left: 0;
+  top: -1px;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(to right, var(--accent), var(--accent-2));
+  box-shadow: 0 0 14px var(--accent);
+}
+
+.hero__rail-item.is-active .hero__rail-swatch {
+  width: 100%;
+  transition: width 0.55s var(--ease);
+}
+
+/* ---------- Lineup slider ---------- */
+.hero__slider {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(104px, 14vh, 150px);
+  z-index: 5;
+  width: min(300px, 32vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hero__slider-cap {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.hero__slider-track {
+  position: relative;
+  height: 2px;
+  background: var(--line-strong);
+  border-radius: 2px;
+}
+
+.hero__slider-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--accent), var(--accent-2));
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.hero__slider-handle {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  translate: 0 -50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--flavor-bg);
+  border: 1px solid var(--line-strong);
+  cursor: grab;
+  touch-action: none;
+  transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+
+.hero__slider-handle:hover,
+.hero__slider-handle:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.hero__slider-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    align-content: end;
+    justify-items: start;
+    padding-bottom: clamp(190px, 26vh, 240px);
+  }
+  .hero__meta {
+    display: none;
+  }
+  .hero__copy {
+    max-width: 440px;
+  }
+  .hero__ghost {
+    translate: -50% -62%;
+  }
+}
+
+/* Phone: the can moves into the upper half and the copy gets the lower
+   half to itself — at this width they cannot share the centre. */
+@media (max-width: 860px) {
+  .can {
+    --can-w: clamp(148px, 41vw, 196px);
+  }
+  .hero__stage {
+    transform: translateY(-24%);
+  }
+  .hero__ghost {
+    translate: -50% -108%;
+  }
+  .hero__ghost span {
+    font-size: clamp(66px, 19vw, 112px);
+    opacity: 0.2;
+  }
+  .hero__grid {
+    padding-bottom: clamp(232px, 31vh, 300px);
+  }
+  .hero__name {
+    font-size: clamp(32px, 8.6vw, 46px);
+  }
+  .hero__desc {
+    display: none;
+  }
+  .hero__cta {
+    bottom: clamp(132px, 17vh, 168px);
+  }
+  .hero__slider {
+    left: 50%;
+    translate: -50% 0;
+    width: min(300px, 76vw);
+    bottom: clamp(74px, 9.5vh, 96px);
+    align-items: center;
+  }
+  .hero__rail-inner {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .hero__rail-inner::-webkit-scrollbar {
+    display: none;
+  }
+  .hero__rail-item {
+    flex: 0 0 116px;
+  }
+}

@@ -1,0 +1,324 @@
+.pour {
+  position: relative;
+  z-index: 3;
+  background: #02040a;
+}
+
+.pour__pin {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.pour__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Accent lighting wash so the film reads in the active flavor's palette */
+.pour__wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 60% 70% at 50% 50%,
+    color-mix(in srgb, var(--accent) 38%, transparent) 0%,
+    transparent 70%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.9;
+}
+
+.pour__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(2, 4, 10, 0.92) 0%,
+    rgba(2, 4, 10, 0.3) 38%,
+    transparent 60%
+  );
+}
+
+@media (max-width: 860px) {
+  .pour__scrim {
+    background: linear-gradient(
+      to bottom,
+      rgba(2, 4, 10, 0.75) 0%,
+      transparent 16%,
+      transparent 44%,
+      rgba(2, 4, 10, 0.95) 64%,
+      #02040a 100%
+    );
+  }
+}
+
+/* ---------- Chapters ---------- */
+.pour__chapters {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* JS writes --ch-shift and opacity only, so the transform itself can stay
+   in CSS and differ per breakpoint. */
+.pour__ch {
+  position: absolute;
+  left: var(--gutter);
+  top: 50%;
+  transform: translateY(calc(-50% + var(--ch-shift, 0px)));
+  width: min(430px, 70vw);
+  opacity: 0;
+}
+
+.pour__ch h3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(40px, 5.6vw, 84px);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  margin: 14px 0 16px;
+}
+
+.pour__ch p {
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.pour__ch-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  color: var(--accent);
+}
+
+.pour__ch-can {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.pour__ch-can img {
+  width: 54px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+}
+
+.pour__ch-can b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.pour__ch-can small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Phone: a 16:9 frame cropped to cover a portrait viewport swallows the
+   screen, so the film is contained in the upper band and the copy sits
+   on solid ground beneath it. */
+@media (max-width: 860px) {
+  .pour__canvas {
+    height: 62%;
+    top: 3%;
+    object-fit: contain;
+  }
+  .pour__ch {
+    top: auto;
+    bottom: 112px;
+    transform: translateY(var(--ch-shift, 0px));
+    width: calc(100% - var(--gutter) * 2);
+  }
+  .pour__ch h3 {
+    font-size: clamp(34px, 10.5vw, 54px);
+  }
+  .pour__ch p {
+    font-size: 14px;
+  }
+  .pour__gate {
+    bottom: 26px;
+  }
+}
+
+/* ---------- Drag gate ---------- */
+.pour__gate {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(48px, 9vh, 92px);
+  translate: -50% 0;
+  z-index: 6;
+  width: min(430px, calc(100vw - var(--gutter) * 2));
+  text-align: center;
+}
+
+.pour__gate-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 auto 16px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(2, 4, 10, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.pour__track {
+  position: relative;
+  height: 62px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.pour__track-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.pour__track-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  padding-left: 46px;
+  pointer-events: none;
+}
+
+.pour__handle {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  box-shadow: 0 8px 30px -6px var(--accent);
+  touch-action: none;
+}
+
+.pour__handle:active {
+  cursor: grabbing;
+}
+
+.pour__handle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pour__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60px;
+  height: 60px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Loader ---------- */
+.pour__loader {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  background: #02040a;
+}
+
+.pour__loader-inner {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.pour__loader-bar {
+  width: 190px;
+  height: 2px;
+  background: var(--line);
+  margin: 14px auto 0;
+  overflow: hidden;
+}
+
+.pour__loader-bar i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+}
+
+/* ---------- Progress rail ---------- */
+.pour__rail {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 5;
+  width: 2px;
+  height: 160px;
+  background: var(--line);
+}
+
+.pour__rail i {
+  display: block;
+  width: 100%;
+  height: 0%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.pour__rail span {
+  position: absolute;
+  right: 14px;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .pour__rail {
+    display: none;
+  }
+}

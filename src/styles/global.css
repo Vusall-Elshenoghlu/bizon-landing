@@ -1,0 +1,234 @@
+/* ============================================================
+   BIZON ENERGY — design tokens
+   ============================================================ */
+:root {
+  /* Surface ramp — Classic BIZON blue carried down into the darks */
+  --bg: #040a1c;
+  --bg-2: #071029;
+  --bg-3: #0c1a3c;
+  --line: rgba(140, 180, 255, 0.12);
+  --line-strong: rgba(140, 180, 255, 0.24);
+
+  --ink: #f4f6fb;
+  --ink-2: rgba(244, 246, 251, 0.62);
+  --ink-3: rgba(244, 246, 251, 0.38);
+
+  /* Live accent — Classic blue, the original BIZON, leads the lineup */
+  --accent: #2f6bff;
+  --accent-2: #7fb2ff;
+  --flavor-bg: #060b1c;
+
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', monospace;
+
+  --gutter: clamp(18px, 4.5vw, 72px);
+  --maxw: 1440px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* `clip` rather than `hidden`: hidden on body alone still let the
+   off-stage cans scroll the page sideways, and hidden would also turn
+   these into scroll containers, which breaks the sticky spec column. */
+html {
+  background: var(--bg);
+  overflow-x: clip;
+  /* Dark scrollbars and form controls, and a no-op padding reset that also
+     neutralises the root padding some embedding hosts inject — it would
+     otherwise shift every 100vh pinned section. */
+  color-scheme: dark;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.is-locked {
+  overflow: hidden;
+}
+
+img,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---------- Typography primitives ---------- */
+/* Azerbaijani sets dotted İ and tailed Ç/Ş/Ğ, so display type needs more
+   room above and below than a Latin-only headline would. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 0.94;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  margin: 0;
+  padding-block: 0.04em 0.1em;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.eyebrow--accent {
+  color: var(--accent);
+}
+
+.lede {
+  font-size: clamp(15px, 1.15vw, 18px);
+  color: var(--ink-2);
+  max-width: 54ch;
+  margin: 0;
+}
+
+/* ---------- Layout ---------- */
+.shell {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: clamp(90px, 13vh, 170px);
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: clamp(44px, 6vw, 88px);
+}
+
+.section-head h2 {
+  font-size: clamp(42px, 7.4vw, 108px);
+}
+
+/* ---------- Scroll reveal (GSAP targets) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+.reveal-line {
+  display: block;
+  overflow: hidden;
+}
+
+/* ---------- Grain + vignette overlay ---------- */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 30px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  will-change: transform;
+}
+
+.btn--solid {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 40px -12px var(--accent);
+}
+
+.btn--solid:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 56px -14px var(--accent);
+}
+
+.btn--ghost {
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.btn__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
